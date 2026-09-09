@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.TaskMapper">
+
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.TaskVO">
+        <id column="id" property="id"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_status" property="taskStatus"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="algorithm_count" property="algorithmCount"/>
+        <result column="device_count" property="deviceCount"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+
+    <sql id="Query_Where_Clause">
+        <where>
+            t.deleted = 0
+            <if test="query.taskName != null and query.taskName != ''">
+                AND t.task_name LIKE CONCAT('%', #{query.taskName}, '%')
+            </if>
+            <if test="query.taskStatus != null and query.taskStatus != ''">
+                AND t.task_status = #{query.taskStatus}
+            </if>
+            <if test="query.taskStatusList != null and query.taskStatusList.size() > 0">
+                AND t.task_status IN
+                <foreach collection="query.taskStatusList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="query.status != null">
+                AND t.status = #{query.status}
+            </if>
+            <if test="query.createdAtStart != null">
+                AND t.created_at &gt;= #{query.createdAtStart}
+            </if>
+            <if test="query.createdAtEnd != null">
+                AND t.created_at &lt;= #{query.createdAtEnd}
+            </if>
+            <if test="query.deviceIds != null and query.deviceIds.size() > 0">
+                AND EXISTS (
+                    SELECT 1 FROM task_device td
+                    WHERE td.task_id = t.id
+                    AND td.device_id IN
+                    <foreach collection="query.deviceIds" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="query.algorithmIds != null and query.algorithmIds.size() > 0">
+                AND EXISTS (
+                    SELECT 1 FROM task_algorithm ta
+                    WHERE ta.task_id = t.id
+                    AND ta.algorithm_id IN
+                    <foreach collection="query.algorithmIds" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT
+            t.id,
+            t.task_name,
+            t.task_status,
+            t.status,
+            t.remark,
+            t.sort_order,
+            (SELECT COUNT(1) FROM task_algorithm WHERE task_id = t.id) AS algorithm_count,
+            (SELECT COUNT(DISTINCT device_id) FROM task_device WHERE task_id = t.id) AS device_count,
+            t.created_by,
+            t.updated_by,
+            t.created_at,
+            t.updated_at
+        FROM task t
+        <include refid="Query_Where_Clause"/>
+        ORDER BY t.sort_order ASC, t.id DESC
+    </select>
+
+
+    <select id="selectVOById" resultMap="VOResultMap">
+        SELECT
+            t.id,
+            t.task_name,
+            t.task_status,
+            t.status,
+            t.remark,
+            t.sort_order,
+            (SELECT COUNT(1) FROM task_algorithm WHERE task_id = t.id) AS algorithm_count,
+            (SELECT COUNT(DISTINCT device_id) FROM task_device WHERE task_id = t.id) AS device_count,
+            t.created_by,
+            t.updated_by,
+            t.created_at,
+            t.updated_at
+        FROM task t
+        WHERE t.id = #{id} AND t.deleted = 0
+    </select>
+
+
+    <select id="countByTaskName" resultType="int">
+        SELECT COUNT(1)
+        FROM task
+        WHERE task_name = #{taskName}
+        AND deleted = 0
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+</mapper>

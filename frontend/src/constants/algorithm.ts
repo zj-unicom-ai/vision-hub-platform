@@ -1,0 +1,48 @@
+export const ALGORITHM_TYPE = {
+  LLM: 'llm',
+  VISION: 'vision',
+} as const
+
+export const ALGORITHM_MODEL_FORMAT = {
+  YOLO: 'yolo',
+} as const
+
+export const ALGORITHM_TYPE_LABEL = {
+  [ALGORITHM_TYPE.LLM]: '大模型语义算法',
+  [ALGORITHM_TYPE.VISION]: '小模型算法',
+} as const
+
+export const ALGORITHM_TYPE_LABEL_TO_CODE = {
+  [ALGORITHM_TYPE_LABEL[ALGORITHM_TYPE.LLM]]: ALGORITHM_TYPE.LLM,
+  [ALGORITHM_TYPE_LABEL[ALGORITHM_TYPE.VISION]]: ALGORITHM_TYPE.VISION,
+} as const
+
+export const ALGORITHM_STATUS = {
+  DISABLED: 0,
+  ENABLED: 1,
+} as const
+
+export const ALGORITHM_STATUS_LABEL = {
+  [ALGORITHM_STATUS.DISABLED]: '下架',
+  [ALGORITHM_STATUS.ENABLED]: '上架',
+} as const
+
+export const ALGORITHM_STATUS_LABEL_TO_CODE = {
+  [ALGORITHM_STATUS_LABEL[ALGORITHM_STATUS.DISABLED]]: ALGORITHM_STATUS.DISABLED,
+  [ALGORITHM_STATUS_LABEL[ALGORITHM_STATUS.ENABLED]]: ALGORITHM_STATUS.ENABLED,
+} as const
+
+export const algorithmTypeOptions = [
+  ALGORITHM_TYPE_LABEL[ALGORITHM_TYPE.LLM],
+  ALGORITHM_TYPE_LABEL[ALGORITHM_TYPE.VISION],
+]
+
+export const algorithmStatusOptions = [
+  ALGORITHM_STATUS_LABEL[ALGORITHM_STATUS.ENABLED],
+  ALGORITHM_STATUS_LABEL[ALGORITHM_STATUS.DISABLED],
+]
+
+export type AlgorithmTypeCode = (typeof ALGORITHM_TYPE)[keyof typeof ALGORITHM_TYPE]
+export type AlgorithmTypeLabel = (typeof ALGORITHM_TYPE_LABEL)[keyof typeof ALGORITHM_TYPE_LABEL]
+export type AlgorithmStatusCode = (typeof ALGORITHM_STATUS)[keyof typeof ALGORITHM_STATUS]
+export type AlgorithmStatusLabel = (typeof ALGORITHM_STATUS_LABEL)[keyof typeof ALGORITHM_STATUS_LABEL]

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.UserMapper">
+
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.UserVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="avatar" property="avatar"/>
+        <result column="status" property="status"/>
+        <result column="last_login_at" property="lastLoginAt"/>
+        <result column="last_login_ip" property="lastLoginIp"/>
+        <result column="remark" property="remark"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, username, nickname, email, phone, avatar, status, last_login_at, last_login_ip,
+        remark, created_by, updated_by, created_at, updated_at, deleted
+    </sql>
+
+
+    <sql id="Query_Where_Clause">
+        <where>
+            deleted = 0
+            <if test="query.username != null and query.username != ''">
+                AND username LIKE CONCAT('%', #{query.username}, '%')
+            </if>
+            <if test="query.nickname != null and query.nickname != ''">
+                AND nickname LIKE CONCAT('%', #{query.nickname}, '%')
+            </if>
+            <if test="query.status != null">
+                AND status = #{query.status}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM sys_user u
+        <include refid="Query_Where_Clause"/>
+        ORDER BY u.id DESC
+    </select>
+
+
+    <select id="selectVOById" resultMap="VOResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM sys_user u
+        WHERE u.id = #{id} AND u.deleted = 0
+    </select>
+
+
+    <select id="selectVOByUsername" resultMap="VOResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM sys_user u
+        WHERE u.username = #{username} AND u.deleted = 0
+    </select>
+
+
+    <select id="countByUsername" resultType="int">
+        SELECT COUNT(1)
+        FROM sys_user
+        WHERE username = #{username}
+        AND deleted = 0
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+</mapper>

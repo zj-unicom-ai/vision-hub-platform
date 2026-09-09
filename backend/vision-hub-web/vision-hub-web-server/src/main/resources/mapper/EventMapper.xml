@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.EventMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.unicom.visionhub.web.entity.event.Event">
+        <id column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="algorithm_id" property="algorithmId"/>
+        <result column="event_name" property="eventName"/>
+        <result column="event_type" property="eventType"/>
+        <result column="status" property="status"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.EventVO">
+        <id column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="algorithm_id" property="algorithmId"/>
+        <result column="event_name" property="eventName"/>
+        <result column="event_type" property="eventType"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="task_name" property="taskName"/>
+        <result column="algorithm_name" property="algorithmName"/>
+    </resultMap>
+
+
+    <sql id="Query_Where_Clause">
+        <where>
+            e.deleted = 0
+            <if test="query.eventName != null and query.eventName != ''">
+                AND e.event_name LIKE CONCAT('%', #{query.eventName}, '%')
+            </if>
+            <if test="query.eventType != null and query.eventType != ''">
+                AND e.event_type = #{query.eventType}
+            </if>
+            <if test="query.status != null">
+                AND e.status = #{query.status}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT
+            e.id,
+            e.task_id,
+            e.algorithm_id,
+            e.event_name,
+            e.event_type,
+            e.status,
+            e.created_at,
+            e.updated_at,
+            t.task_name,
+            a.algorithm_name
+        FROM event e
+        LEFT JOIN task t ON e.task_id = t.id AND t.deleted = 0
+        LEFT JOIN algorithm a ON e.algorithm_id = a.id AND a.deleted = 0
+        <include refid="Query_Where_Clause"/>
+        ORDER BY e.created_at DESC
+    </select>
+
+
+    <select id="selectListByTaskId" resultMap="BaseResultMap">
+        SELECT id, task_id, algorithm_id, event_name, event_type, status,
+               created_by, updated_by, created_at, updated_at, deleted
+        FROM event
+        WHERE task_id = #{taskId} AND deleted = 0
+    </select>
+
+
+    <select id="selectByTaskIdAndAlgorithmId" resultMap="BaseResultMap">
+        SELECT id, task_id, algorithm_id, event_name, event_type, status,
+               created_by, updated_by, created_at, updated_at, deleted
+        FROM event
+        WHERE task_id = #{taskId} AND algorithm_id = #{algorithmId} AND deleted = 0
+        LIMIT 1
+    </select>
+
+
+    <update id="deleteByTaskId">
+        UPDATE event
+        SET deleted = 1
+        WHERE task_id = #{taskId} AND deleted = 0
+    </update>
+
+</mapper>

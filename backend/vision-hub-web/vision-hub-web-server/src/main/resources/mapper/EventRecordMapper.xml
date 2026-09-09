@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.EventRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.unicom.visionhub.web.entity.event.EventRecord">
+        <id column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="algorithm_id" property="algorithmId"/>
+        <result column="event_id" property="eventId"/>
+        <result column="event_name" property="eventName"/>
+        <result column="event_type" property="eventType"/>
+        <result column="alarm_image" property="alarmImage"/>
+        <result column="analysis_result" property="analysisResult"/>
+        <result column="confidence" property="confidence"/>
+        <result column="execute_duration" property="executeDuration"/>
+        <result column="status" property="status"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.EventRecordVO">
+        <id column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="algorithm_id" property="algorithmId"/>
+        <result column="event_id" property="eventId"/>
+        <result column="event_name" property="eventName"/>
+        <result column="event_type" property="eventType"/>
+        <result column="alarm_image" property="alarmImageUrl"/>
+        <result column="analysis_result" property="analysisResult"/>
+        <result column="confidence" property="confidence"/>
+        <result column="execute_duration" property="executeDuration"/>
+        <result column="status" property="status"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="task_name" property="taskName"/>
+        <result column="device_name" property="deviceName"/>
+        <result column="algorithm_name" property="algorithmName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        er.id, er.task_id, er.device_id, er.algorithm_id, er.event_id, er.event_name, er.event_type,
+        er.alarm_image, er.analysis_result, er.confidence, er.execute_duration, er.status,
+        er.created_by, er.updated_by, er.created_at, er.updated_at, er.deleted
+    </sql>
+
+    <sql id="Query_Where_Clause">
+        <where>
+            er.deleted = 0
+            <if test="query.eventIdList != null and query.eventIdList.size() > 0">
+                AND er.event_id IN
+                <foreach collection="query.eventIdList" item="item" open="(" separator="," close=")">#{item}</foreach>
+            </if>
+            <if test="query.taskIdList != null and query.taskIdList.size() > 0">
+                AND er.task_id IN
+                <foreach collection="query.taskIdList" item="item" open="(" separator="," close=")">#{item}</foreach>
+            </if>
+            <if test="query.deviceIdList != null and query.deviceIdList.size() > 0">
+                AND er.device_id IN
+                <foreach collection="query.deviceIdList" item="item" open="(" separator="," close=")">#{item}</foreach>
+            </if>
+            <if test="query.taskAlgorithmIdList != null and query.taskAlgorithmIdList.size() > 0">
+                AND er.algorithm_id IN
+                <foreach collection="query.taskAlgorithmIdList" item="item" open="(" separator="," close=")">#{item}</foreach>
+            </if>
+            <if test="query.eventType != null and query.eventType != ''">AND er.event_type = #{query.eventType}</if>
+            <if test="query.eventName != null and query.eventName != ''">AND er.event_name LIKE CONCAT('%', #{query.eventName}, '%')</if>
+            <if test="query.status != null and query.status != ''">AND er.status = #{query.status}</if>
+            <if test="query.startTime != null">AND er.created_at &gt;= #{query.startTime}</if>
+            <if test="query.endTime != null">AND er.created_at &lt;= #{query.endTime}</if>
+        </where>
+    </sql>
+
+    <sql id="VO_Select_Columns">
+        er.id, er.task_id, er.device_id, er.algorithm_id, er.event_id, er.event_name, er.event_type,
+        er.alarm_image, er.analysis_result, er.confidence, er.execute_duration, er.status,
+        er.created_by, er.created_at, er.updated_at,
+        t.task_name, d.device_name, a.algorithm_name
+    </sql>
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT <include refid="VO_Select_Columns"/>
+        FROM event_record er
+        LEFT JOIN task t ON er.task_id = t.id AND t.deleted = 0
+        LEFT JOIN device d ON er.device_id = d.id AND d.deleted = 0
+        LEFT JOIN algorithm a ON er.algorithm_id = a.id AND a.deleted = 0
+        LEFT JOIN task_algorithm ta ON er.task_id = ta.task_id AND er.algorithm_id = ta.algorithm_id
+        <include refid="Query_Where_Clause"/>
+        ORDER BY er.created_at DESC
+    </select>
+
+    <select id="selectListWithVO" resultMap="VOResultMap">
+        SELECT <include refid="VO_Select_Columns"/>
+        FROM event_record er
+        LEFT JOIN task t ON er.task_id = t.id AND t.deleted = 0
+        LEFT JOIN device d ON er.device_id = d.id AND d.deleted = 0
+        LEFT JOIN algorithm a ON er.algorithm_id = a.id AND a.deleted = 0
+        LEFT JOIN task_algorithm ta ON er.task_id = ta.task_id AND er.algorithm_id = ta.algorithm_id
+        <include refid="Query_Where_Clause"/>
+        ORDER BY er.created_at DESC
+    </select>
+
+    <select id="selectVOById" resultMap="VOResultMap">
+        SELECT <include refid="VO_Select_Columns"/>
+        FROM event_record er
+        LEFT JOIN task t ON er.task_id = t.id AND t.deleted = 0
+        LEFT JOIN device d ON er.device_id = d.id AND d.deleted = 0
+        LEFT JOIN algorithm a ON er.algorithm_id = a.id AND a.deleted = 0
+        WHERE er.id = #{id} AND er.deleted = 0
+    </select>
+
+</mapper>

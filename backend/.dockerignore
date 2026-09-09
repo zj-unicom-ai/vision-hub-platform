@@ -1,0 +1,9 @@
+target
+.git
+.gitignore
+*.md
+docs
+.vscode
+.idea
+*.iml
+.claude

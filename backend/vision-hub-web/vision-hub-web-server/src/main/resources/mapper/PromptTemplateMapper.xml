@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.PromptTemplateMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.unicom.visionhub.web.entity.prompt.PromptTemplate">
+        <id column="id" property="id"/>
+        <result column="template_name" property="templateName"/>
+        <result column="template_content" property="templateContent"/>
+        <result column="output_format" property="outputFormat" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.PromptTemplateVO" extends="BaseResultMap">
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, template_name, template_content, output_format, description,
+        status, remark, sort_order, created_by, updated_by, created_at, updated_at, deleted
+    </sql>
+
+
+    <sql id="VO_Column_List">
+        t.id,
+        t.template_name,
+        t.template_content,
+        t.output_format,
+        t.description,
+        t.status,
+        t.remark,
+        t.sort_order,
+        t.created_by,
+        t.updated_by,
+        t.created_at,
+        t.updated_at
+    </sql>
+
+
+    <sql id="Query_Where_Clause">
+        <where>
+            t.deleted = 0
+            <if test="query.templateName != null and query.templateName != ''">
+                AND t.template_name LIKE CONCAT('%', #{query.templateName}, '%')
+            </if>
+            <if test="query.status != null">
+                AND t.status = #{query.status}
+            </if>
+            <if test="query.industryId != null">
+                AND t.id IN (
+                    SELECT template_id FROM prompt_template_industry
+                    WHERE industry_id = #{query.industryId}
+                )
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT
+            <include refid="VO_Column_List"/>
+        FROM prompt_template t
+        <include refid="Query_Where_Clause"/>
+        ORDER BY t.sort_order ASC, t.id DESC
+    </select>
+
+
+    <select id="selectVOById" resultMap="VOResultMap">
+        SELECT
+            <include refid="VO_Column_List"/>
+        FROM prompt_template t
+        WHERE t.id = #{id} AND t.deleted = 0
+    </select>
+
+
+    <select id="countByTemplateName" resultType="int">
+        SELECT COUNT(1)
+        FROM prompt_template
+        WHERE template_name = #{templateName}
+        AND deleted = 0
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+
+    <select id="selectListByCondition" resultMap="VOResultMap">
+        SELECT
+            <include refid="VO_Column_List"/>
+        FROM prompt_template t
+        <include refid="Query_Where_Clause"/>
+        ORDER BY t.sort_order ASC, t.id DESC
+        LIMIT 1000
+    </select>
+
+</mapper>

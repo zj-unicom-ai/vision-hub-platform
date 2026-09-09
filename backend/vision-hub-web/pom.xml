@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.unicom.visionhub</groupId>
+        <artifactId>vision-hub-server</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>vision-hub-web</artifactId>
+    <packaging>pom</packaging>
+    <name>Vision Hub Web</name>
+    <description>Enterprise Visual AI Middle Platform - Web Parent Module</description>
+
+    <modules>
+        <module>vision-hub-web-api</module>
+        <module>vision-hub-web-server</module>
+    </modules>
+</project>

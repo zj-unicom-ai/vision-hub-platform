@@ -1,0 +1,26 @@
+server:
+  port: ${MEDIA_SERVER_PORT:18081}
+
+spring:
+  application:
+    name: vision-hub-media
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+vision:
+  hub:
+    internal:
+      secret: ${INTERNAL_SECRET:change-me-internal-secret}
+    web:
+      base-url: ${WEB_BASE_URL:http://localhost:18080}
+
+vision-hub:
+  internal:
+    secret: ${INTERNAL_SECRET:change-me-internal-secret}
+  web:
+    base-url: ${WEB_BASE_URL:http://localhost:18080}
+
+media:
+  snapshot-dir: ${MEDIA_SNAPSHOT_DIR:/tmp/vision-hub/snapshots}
+  stream-check-timeout-ms: ${MEDIA_STREAM_CHECK_TIMEOUT_MS:10000}

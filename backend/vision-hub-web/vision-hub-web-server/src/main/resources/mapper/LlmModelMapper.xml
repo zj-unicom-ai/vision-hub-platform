@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.LlmModelMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.unicom.visionhub.web.entity.model.LlmModel">
+        <id column="id" property="id"/>
+        <result column="model_name" property="modelName"/>
+        <result column="model_id" property="modelId"/>
+        <result column="model_type" property="modelType"/>
+        <result column="provider" property="provider"/>
+        <result column="api_url" property="apiUrl"/>
+        <result column="api_key" property="apiKey"/>
+        <result column="model_version" property="modelVersion"/>
+        <result column="icon" property="icon"/>
+        <result column="context_length" property="contextLength"/>
+        <result column="max_tokens" property="maxTokens"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.LlmModelVO">
+        <id column="id" property="id"/>
+        <result column="model_name" property="modelName"/>
+        <result column="model_id" property="modelId"/>
+        <result column="model_type" property="modelType"/>
+        <result column="provider" property="provider"/>
+        <result column="api_url" property="apiUrl"/>
+        <result column="api_key" property="apiKey"/>
+        <result column="model_version" property="modelVersion"/>
+        <result column="icon" property="icon"/>
+        <result column="context_length" property="contextLength"/>
+        <result column="max_tokens" property="maxTokens"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, model_name, model_id, model_type, provider, api_url, api_key, model_version, icon,
+        context_length, max_tokens, description, status, remark, sort_order, created_by, updated_by, created_at, updated_at, deleted
+    </sql>
+
+
+    <sql id="Query_Where_Clause">
+        <where>
+            deleted = 0
+            <if test="query.modelName != null and query.modelName != ''">
+                AND model_name LIKE CONCAT('%', #{query.modelName}, '%')
+            </if>
+            <if test="query.modelType != null and query.modelType != ''">
+                AND model_type = #{query.modelType}
+            </if>
+            <if test="query.provider != null and query.provider != ''">
+                AND provider = #{query.provider}
+            </if>
+            <if test="query.status != null">
+                AND status = #{query.status}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM llm_model m
+        <include refid="Query_Where_Clause"/>
+        ORDER BY m.sort_order ASC, m.id DESC
+    </select>
+
+
+    <select id="selectVOById" resultMap="VOResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM llm_model m
+        WHERE m.id = #{id} AND m.deleted = 0
+    </select>
+
+
+    <select id="countByModelName" resultType="int">
+        SELECT COUNT(1)
+        FROM llm_model
+        WHERE model_name = #{modelName}
+        AND deleted = 0
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+</mapper>

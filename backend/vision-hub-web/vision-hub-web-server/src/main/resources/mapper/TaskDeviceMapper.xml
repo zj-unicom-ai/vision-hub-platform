@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.TaskDeviceMapper">
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.TaskDeviceVO">
+        <id column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="algorithm_id" property="algorithmId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="device_name" property="deviceName"/>
+        <result column="device_code" property="deviceCode"/>
+        <result column="enabled" property="enabled"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="Query_Where_Clause">
+        <where>
+            td.task_id = #{taskId}
+            AND td.algorithm_id = #{algorithmId}
+            <if test="query.deviceName != null and query.deviceName != ''">
+                AND d.device_name LIKE CONCAT('%', #{query.deviceName}, '%')
+            </if>
+            <if test="query.enabled != null">
+                AND td.enabled = #{query.enabled}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectPageByTaskIdAndAlgorithmId" resultMap="VOResultMap">
+        SELECT
+            td.id,
+            td.task_id,
+            td.algorithm_id,
+            td.device_id,
+            d.device_name,
+            d.device_code,
+            td.enabled,
+            td.updated_by,
+            td.updated_at
+        FROM task_device td
+        INNER JOIN device d ON td.device_id = d.id AND d.deleted = 0
+        <include refid="Query_Where_Clause"/>
+        ORDER BY td.updated_at DESC
+    </select>
+
+    <select id="countByTaskIdAndAlgorithmId" resultType="int">
+        SELECT COUNT(1)
+        FROM task_device
+        WHERE task_id = #{taskId} AND algorithm_id = #{algorithmId}
+    </select>
+
+    <delete id="deleteByTaskId">
+        DELETE FROM task_device WHERE task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteByTaskIdAlgorithmIdAndDeviceId">
+        DELETE FROM task_device WHERE task_id = #{taskId} AND algorithm_id = #{algorithmId} AND device_id = #{deviceId}
+    </delete>
+
+    <insert id="insertBatch">
+        INSERT INTO task_device
+        (task_id, algorithm_id, device_id, enabled, created_by, updated_by, created_at, updated_at)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.taskId}, #{item.algorithmId}, #{item.deviceId}, #{item.enabled},
+             #{item.createdBy}, #{item.updatedBy}, #{item.createdAt}, #{item.updatedAt})
+        </foreach>
+    </insert>
+
+    <select id="countByDeviceId" resultType="int">
+        SELECT COUNT(1)
+        FROM task_device
+        WHERE device_id = #{deviceId}
+    </select>
+
+</mapper>

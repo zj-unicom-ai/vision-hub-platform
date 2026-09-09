@@ -1,0 +1,81 @@
+server:
+  port: ${WEB_SERVER_PORT:18080}
+
+spring:
+  application:
+    name: vision-hub-web
+  cloud:
+    compatibility-verifier:
+      enabled: false
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  servlet:
+    multipart:
+      max-file-size: ${MULTIPART_MAX_FILE_SIZE:100MB}
+      max-request-size: ${MULTIPART_MAX_REQUEST_SIZE:100MB}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:jdbc:mysql://localhost:3306/vision_hub?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:vision-hub-web}
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.unicom.visionhub.web.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+vision:
+  hub:
+    internal:
+      secret: ${INTERNAL_SECRET:change-me-internal-secret}
+    web:
+      base-url: ${WEB_BASE_URL:http://localhost:18080}
+    media:
+      base-url: ${MEDIA_BASE_URL:http://localhost:18081}
+
+vision-hub:
+  internal:
+    secret: ${INTERNAL_SECRET:change-me-internal-secret}
+  web:
+    base-url: ${WEB_BASE_URL:http://localhost:18080}
+  media:
+    base-url: ${MEDIA_BASE_URL:http://localhost:18081}
+
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  bucket-name: ${MINIO_BUCKET:vision-hub}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  cdn: ${MINIO_CDN:}
+
+springdoc:
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:true}
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:true}
+
+logging:
+  level:
+    com.unicom.visionhub: ${LOG_LEVEL:INFO}

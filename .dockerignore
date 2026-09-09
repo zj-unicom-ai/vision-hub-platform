@@ -1,0 +1,11 @@
+.git
+.idea
+.vscode
+**/node_modules
+**/dist
+**/target
+logs
+docker/data
+docker/logs
+**/*.log
+*.md

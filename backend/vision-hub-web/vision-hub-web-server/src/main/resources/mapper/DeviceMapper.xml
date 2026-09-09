@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.DeviceMapper">
+
+    <resultMap id="BaseResultMap" type="com.unicom.visionhub.web.entity.device.Device">
+        <id column="id" property="id"/>
+        <result column="device_name" property="deviceName"/>
+        <result column="device_code" property="deviceCode"/>
+        <result column="device_type" property="deviceType"/>
+        <result column="access_protocol" property="accessProtocol"/>
+        <result column="stream_url" property="streamUrl"/>
+        <result column="manufacturer" property="manufacturer"/>
+        <result column="model" property="model"/>
+        <result column="device_status" property="deviceStatus"/>
+        <result column="last_check_time" property="lastCheckTime"/>
+        <result column="last_check_status" property="lastCheckStatus"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.DeviceVO">
+        <id column="id" property="id"/>
+        <result column="device_name" property="deviceName"/>
+        <result column="device_code" property="deviceCode"/>
+        <result column="device_type" property="deviceType"/>
+        <result column="access_protocol" property="accessProtocol"/>
+        <result column="stream_url" property="streamUrl"/>
+        <result column="manufacturer" property="manufacturer"/>
+        <result column="model" property="model"/>
+        <result column="device_status" property="deviceStatus"/>
+        <result column="last_check_time" property="lastCheckTime"/>
+        <result column="last_check_status" property="lastCheckStatus"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, device_name, device_code, device_type, access_protocol, stream_url,
+        manufacturer, model, device_status, last_check_time, last_check_status,
+        status, remark, sort_order, created_by, updated_by, created_at, updated_at, deleted
+    </sql>
+
+    <sql id="Query_Where_Clause">
+        <where>
+            deleted = 0
+            <if test="query.deviceName != null and query.deviceName != ''">
+                AND device_name LIKE CONCAT('%', #{query.deviceName}, '%')
+            </if>
+            <if test="query.deviceCode != null and query.deviceCode != ''">
+                AND device_code LIKE CONCAT('%', #{query.deviceCode}, '%')
+            </if>
+            <if test="query.deviceType != null and query.deviceType != ''">
+                AND device_type = #{query.deviceType}
+            </if>
+            <if test="query.deviceStatus != null and query.deviceStatus != ''">
+                AND device_status = #{query.deviceStatus}
+            </if>
+            <if test="query.status != null">
+                AND status = #{query.status}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM device
+        <include refid="Query_Where_Clause"/>
+        ORDER BY sort_order ASC, id DESC
+    </select>
+
+    <select id="selectVOById" resultMap="VOResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM device
+        WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countByDeviceCode" resultType="int">
+        SELECT COUNT(1)
+        FROM device
+        WHERE device_code = #{deviceCode}
+        AND deleted = 0
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <select id="selectEnabledStreamDevices" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM device
+        WHERE status = 1
+        AND access_protocol = 'stream'
+        AND deleted = 0
+    </select>
+
+</mapper>

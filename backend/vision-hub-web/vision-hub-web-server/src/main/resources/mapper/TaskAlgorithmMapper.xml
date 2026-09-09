@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.TaskAlgorithmMapper">
+
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.TaskAlgorithmVO">
+        <id column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="algorithm_id" property="algorithmId"/>
+        <result column="algorithm_name" property="algorithmName"/>
+        <result column="sample_interval" property="sampleInterval"/>
+        <result column="validity_end" property="validityEnd"/>
+        <result column="event_id" property="eventId"/>
+        <result column="event_name" property="eventName"/>
+        <result column="schedule_rules" property="scheduleRules" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+
+    <select id="selectListByTaskId" resultMap="VOResultMap">
+        SELECT
+            ta.id,
+            ta.task_id,
+            ta.algorithm_id,
+            a.algorithm_name,
+            ta.sample_interval,
+            ta.validity_end,
+            ta.event_id,
+            e.event_name,
+            ta.schedule_rules,
+            ta.created_at,
+            ta.updated_at
+        FROM task_algorithm ta
+        LEFT JOIN algorithm a ON ta.algorithm_id = a.id AND a.deleted = 0
+        LEFT JOIN event e ON ta.event_id = e.id AND e.deleted = 0
+        WHERE ta.task_id = #{taskId}
+        ORDER BY ta.id ASC
+    </select>
+
+
+    <select id="selectPageByAlgorithmName" resultMap="VOResultMap">
+        SELECT
+            ta.id,
+            ta.task_id,
+            ta.algorithm_id,
+            a.algorithm_name,
+            ta.sample_interval,
+            ta.validity_end,
+            ta.event_id,
+            e.event_name,
+            ta.schedule_rules,
+            ta.created_at,
+            ta.updated_at
+        FROM task_algorithm ta
+        LEFT JOIN algorithm a ON ta.algorithm_id = a.id AND a.deleted = 0
+        LEFT JOIN event e ON ta.event_id = e.id AND e.deleted = 0
+        <where>
+            <if test="algorithmName != null and algorithmName != ''">
+                a.algorithm_name LIKE CONCAT('%', #{algorithmName}, '%')
+            </if>
+        </where>
+        ORDER BY ta.id DESC
+    </select>
+
+
+    <insert id="insertBatch">
+        INSERT INTO task_algorithm
+        (task_id, algorithm_id, sample_interval, validity_end, event_id, schedule_rules, created_by, updated_by, created_at, updated_at)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.taskId}, #{item.algorithmId}, #{item.sampleInterval}, #{item.validityEnd},
+             #{item.eventId}, #{item.scheduleRules, typeHandler=com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler},
+             #{item.createdBy}, #{item.updatedBy}, #{item.createdAt}, #{item.updatedAt})
+        </foreach>
+    </insert>
+
+
+    <select id="countByAlgorithmId" resultType="int">
+        SELECT COUNT(1)
+        FROM task_algorithm
+        WHERE algorithm_id = #{algorithmId}
+    </select>
+
+
+    <select id="countRunningByAlgorithmId" resultType="int">
+        SELECT COUNT(1)
+        FROM task_algorithm ta
+        INNER JOIN task t ON ta.task_id = t.id
+        WHERE ta.algorithm_id = #{algorithmId}
+          AND t.task_status = 'running'
+          AND t.deleted = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.AlgorithmMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.unicom.visionhub.web.entity.algorithm.Algorithm">
+        <id column="id" property="id"/>
+        <result column="algorithm_name" property="algorithmName"/>
+        <result column="algorithm_code" property="algorithmCode"/>
+        <result column="algorithm_type" property="algorithmType"/>
+        <result column="media_type" property="mediaType"/>
+        <result column="description" property="description"/>
+        <result column="llm_model_id" property="llmModelId"/>
+        <result column="detection_content" property="detectionContent"/>
+        <result column="output_format" property="outputFormat" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="model_format" property="modelFormat"/>
+        <result column="model_path" property="modelPath"/>
+        <result column="inference_url" property="inferenceUrl"/>
+        <result column="inference_config" property="inferenceConfig" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="status" property="status"/>
+        <result column="version" property="version"/>
+        <result column="remark" property="remark"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="icon" property="icon"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.AlgorithmVO" extends="BaseResultMap">
+        <result column="llm_model_name" property="llmModelName"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, algorithm_name, algorithm_code, algorithm_type, media_type, description,
+        llm_model_id, detection_content, output_format,
+        model_format, model_path, inference_url, inference_config,
+        status, version, remark, sort_order, icon,
+        created_by, updated_by, created_at, updated_at, deleted
+    </sql>
+
+
+    <sql id="Query_Where_Clause">
+        <where>
+            a.deleted = 0
+            <if test="query.algorithmName != null and query.algorithmName != ''">
+                AND a.algorithm_name LIKE CONCAT('%', #{query.algorithmName}, '%')
+            </if>
+            <if test="query.algorithmCode != null and query.algorithmCode != ''">
+                AND a.algorithm_code = #{query.algorithmCode}
+            </if>
+            <if test="query.algorithmType != null and query.algorithmType != ''">
+                AND a.algorithm_type = #{query.algorithmType}
+            </if>
+            <if test="query.mediaType != null and query.mediaType != ''">
+                AND a.media_type = #{query.mediaType}
+            </if>
+            <if test="query.status != null">
+                AND a.status = #{query.status}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT
+            a.id,
+            a.algorithm_name,
+            a.algorithm_code,
+            a.algorithm_type,
+            a.media_type,
+            a.description,
+            a.llm_model_id,
+            a.detection_content,
+            a.output_format,
+            a.model_format,
+            a.model_path,
+            a.inference_url,
+            a.inference_config,
+            a.status,
+            a.version,
+            a.remark,
+            a.sort_order,
+            a.icon,
+            a.created_by,
+            a.updated_by,
+            a.created_at,
+            a.updated_at,
+            m.model_name AS llm_model_name
+        FROM algorithm a
+        LEFT JOIN llm_model m ON a.llm_model_id = m.id AND m.deleted = 0
+        <include refid="Query_Where_Clause"/>
+        ORDER BY a.sort_order ASC, a.id DESC
+    </select>
+
+
+    <select id="selectVOById" resultMap="VOResultMap">
+        SELECT
+            a.id,
+            a.algorithm_name,
+            a.algorithm_code,
+            a.algorithm_type,
+            a.description,
+            a.llm_model_id,
+            a.detection_content,
+            a.output_format,
+            a.model_format,
+            a.model_path,
+            a.inference_url,
+            a.inference_config,
+            a.status,
+            a.version,
+            a.remark,
+            a.sort_order,
+            a.icon,
+            a.created_by,
+            a.updated_by,
+            a.created_at,
+            a.updated_at,
+            m.model_name AS llm_model_name
+        FROM algorithm a
+        LEFT JOIN llm_model m ON a.llm_model_id = m.id AND m.deleted = 0
+        WHERE a.id = #{id} AND a.deleted = 0
+    </select>
+
+
+    <select id="selectByAlgorithmCode" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM algorithm
+        WHERE algorithm_code = #{algorithmCode} AND deleted = 0
+    </select>
+
+
+    <select id="countByAlgorithmCode" resultType="int">
+        SELECT COUNT(1)
+        FROM algorithm
+        WHERE algorithm_code = #{algorithmCode}
+        AND deleted = 0
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+
+    <select id="countByLlmModelId" resultType="int">
+        SELECT COUNT(1)
+        FROM algorithm
+        WHERE llm_model_id = #{llmModelId}
+        AND deleted = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unicom.visionhub.web.mapper.IndustryMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.unicom.visionhub.web.entity.industry.Industry">
+        <id column="id" property="id"/>
+        <result column="industry_name" property="industryName"/>
+        <result column="industry_code" property="industryCode"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+
+    <resultMap id="VOResultMap" type="com.unicom.visionhub.web.vo.IndustryVO" extends="BaseResultMap">
+        <result column="prompt_template_count" property="promptTemplateCount"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, industry_name, industry_code, description,
+        status, remark, sort_order, created_by, updated_by, created_at, updated_at, deleted
+    </sql>
+
+
+    <sql id="Query_Where_Clause">
+        <where>
+            t.deleted = 0
+            <if test="query.industryName != null and query.industryName != ''">
+                AND t.industry_name LIKE CONCAT('%', #{query.industryName}, '%')
+            </if>
+            <if test="query.industryCode != null and query.industryCode != ''">
+                AND t.industry_code = #{query.industryCode}
+            </if>
+            <if test="query.status != null">
+                AND t.status = #{query.status}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectPageWithVO" resultMap="VOResultMap">
+        SELECT
+            t.id,
+            t.industry_name,
+            t.industry_code,
+            t.description,
+            t.status,
+            t.remark,
+            t.sort_order,
+            t.created_by,
+            t.updated_by,
+            t.created_at,
+            t.updated_at
+        FROM industry t
+        <include refid="Query_Where_Clause"/>
+        ORDER BY t.sort_order ASC, t.id DESC
+    </select>
+
+
+    <select id="selectVOById" resultMap="VOResultMap">
+        SELECT
+            t.id,
+            t.industry_name,
+            t.industry_code,
+            t.description,
+            t.status,
+            t.remark,
+            t.sort_order,
+            t.created_by,
+            t.updated_by,
+            t.created_at,
+            t.updated_at
+        FROM industry t
+        WHERE t.id = #{id} AND t.deleted = 0
+    </select>
+
+
+    <select id="countByIndustryCode" resultType="int">
+        SELECT COUNT(1)
+        FROM industry
+        WHERE industry_code = #{industryCode}
+        AND deleted = 0
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+
+    <select id="selectListWithVO" resultMap="VOResultMap">
+        SELECT
+            t.id,
+            t.industry_name,
+            t.industry_code,
+            t.description,
+            t.status,
+            t.remark,
+            t.sort_order,
+            t.created_by,
+            t.updated_by,
+            t.created_at,
+            t.updated_at,
+            (
+                SELECT COUNT(1)
+                FROM prompt_template_industry pti
+                INNER JOIN prompt_template pt ON pt.id = pti.template_id AND pt.deleted = 0
+                WHERE pti.industry_id = t.id
+            ) AS prompt_template_count
+        FROM industry t
+        <include refid="Query_Where_Clause"/>
+        ORDER BY t.sort_order ASC, t.id DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+target/
+*.class
+
+# Logs
+*.log
+logs/
+
+# Runtime and local config
+.env
+.env.*
+!.env.example
+!docker/.env.example
+application-local-*.yml
+/server
+/web
+
+# Docker runtime data
+docker/data/
+docker/logs/
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# Frontend caches
+frontend/.vite/
+frontend/node_modules/
+frontend/dist/
+frontend/tsconfig.tsbuildinfo
+
+# Backend build outputs
+backend/**/target/
