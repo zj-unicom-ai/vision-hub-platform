@@ -257,7 +257,7 @@ The following frames show a left-versus-right fire test using the same camera an
 
 | Left: outside the exclusion region, alarm produced | Right: inside the exclusion region, no final alarm |
 | :---: | :---: |
-| ![Fire in the unmasked left area](docs/images/enterprise-fire-unmasked.png) | ![Fire in the excluded right area](docs/images/enterprise-fire-masked.png) |
+| ![Fire in the unmasked left area](docs/images/enterprise-fire-unmasked-2.png) | ![Fire in the excluded right area](docs/images/enterprise-fire-masked.png) |
 
 For enterprise consulting and technical support, please contact us:
 

@@ -257,7 +257,7 @@ Vision Hub Platform 虽然开源，但真实企业落地通常不仅是把服务
 
 | 左侧：非屏蔽区域，形成告警 | 右侧：屏蔽区域，不形成最终告警 |
 | :---: | :---: |
-| ![左侧非屏蔽区域出现火焰](docs/images/enterprise-fire-unmasked.png) | ![右侧屏蔽区域出现火焰](docs/images/enterprise-fire-masked.png) |
+| ![左侧非屏蔽区域出现火焰](docs/images/enterprise-fire-unmasked-2.png) | ![右侧屏蔽区域出现火焰](docs/images/enterprise-fire-masked.png) |
 
 如需企业落地咨询与技术支持，欢迎联系我们：
 
