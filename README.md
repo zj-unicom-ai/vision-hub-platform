@@ -243,7 +243,9 @@ Vision Hub Platform 虽然开源，但真实企业落地通常不仅是把服务
 
 ### 企业场景治理能力
 
-**场景治理、检测区与屏蔽区、组织机构等企业扩展能力不包含在本开源仓库，也不会通过本仓库的 Docker Compose 部署获得。**以下图片展示企业场景中可扩展的配置和验证方式。
+**场景治理、检测区与屏蔽区、组织机构等企业扩展能力不包含在本开源仓库，也不会通过本仓库的 Docker Compose 部署获得。**
+
+以下图片展示企业场景中可扩展的配置和验证方式。
 
 企业扩展的任务配置界面提供场景治理入口，可在任务与设备点位的基础上继续设置区域规则。
 
@@ -257,7 +259,7 @@ Vision Hub Platform 虽然开源，但真实企业落地通常不仅是把服务
 
 | 左侧：非屏蔽区域，形成告警 | 右侧：屏蔽区域，不形成最终告警 |
 | :---: | :---: |
-| ![左侧非屏蔽区域出现火焰](docs/images/enterprise-fire-unmasked-2.png) | ![右侧屏蔽区域出现火焰](docs/images/enterprise-fire-masked.png) |
+| [![左侧非屏蔽区域出现火焰](docs/images/preview/enterprise-fire-unmasked.jpg)](docs/images/enterprise-fire-unmasked.jpg) | [![右侧屏蔽区域出现火焰](docs/images/preview/enterprise-fire-masked.png)](docs/images/enterprise-fire-masked.png) |
 
 如需企业落地咨询与技术支持，欢迎联系我们：
 

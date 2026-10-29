@@ -243,7 +243,9 @@ Although Vision Hub Platform is open source, real enterprise adoption usually in
 
 ### Enterprise Scene Governance
 
-**Scene governance, detection and exclusion regions, and organization management are enterprise extensions that are not included in this open-source repository or its Docker Compose deployment.** The following images illustrate configuration and validation options for enterprise scenarios.
+**Scene governance, detection and exclusion regions, and organization management are enterprise extensions that are not included in this open-source repository or its Docker Compose deployment.**
+
+The following images illustrate configuration and validation options for enterprise scenarios.
 
 The enterprise task configuration screen provides an entry to scene governance, where region rules can be added to tasks and device points.
 
@@ -257,7 +259,7 @@ The following frames show a left-versus-right fire test using the same camera an
 
 | Left: outside the exclusion region, alarm produced | Right: inside the exclusion region, no final alarm |
 | :---: | :---: |
-| ![Fire in the unmasked left area](docs/images/enterprise-fire-unmasked-2.png) | ![Fire in the excluded right area](docs/images/enterprise-fire-masked.png) |
+| [![Fire in the unmasked left area](docs/images/preview/enterprise-fire-unmasked.jpg)](docs/images/enterprise-fire-unmasked.jpg) | [![Fire in the excluded right area](docs/images/preview/enterprise-fire-masked.png)](docs/images/enterprise-fire-masked.png) |
 
 For enterprise consulting and technical support, please contact us:
 
